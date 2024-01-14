@@ -1,0 +1,39 @@
+services:
+  filestorage-api:
+    env_file: .env
+    container_name: filestorage_api
+    build:
+      context: ./server
+    image: filestorage-api
+    pull_policy: never
+    ports:
+      - 5000:5000
+    volumes:
+      - ./src:/opt/server
+    environment:
+      - PGHOST=${PGHOST}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=5432
+      - PGDATABASE=${PGDATABASE}
+    depends_on:
+      filestorage-db:
+        condition: service_healthy
+
+  filestorage-db:
+    env_file: .env
+    image: postgres:15-alpine
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - ${PGPORT_LOCAL}:5432
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${PGDATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
