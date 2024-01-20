@@ -1,6 +1,7 @@
 import logging
 import psycopg
 from psycopg import abc as psy_abc
+from user import models
 
 from psycopg import rows
 import psycopg_pool
@@ -49,10 +50,10 @@ def row_factory(cls: Type[T]):
     return _row_factory
 
 
-def make_fetch_one(cls: Type[T]):
+def make_fetchone(cls: Type[T]):
     factory: rows.RowFactory[T] = row_factory(cls)
 
-    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params]):
+    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
         with get_pool().connection() as conn, conn.cursor(row_factory=factory) as cur:
             cur.execute(query, params)
             return cur.fetchone()
@@ -60,10 +61,10 @@ def make_fetch_one(cls: Type[T]):
     return fetch
 
 
-def make_fetch_many(cls: Type[T]):
+def make_fetchmany(cls: Type[T]):
     factory: rows.RowFactory[T] = row_factory(cls)
 
-    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params], max: int):
+    def fetch(query: psy_abc.Query, max: int, params: Optional[psy_abc.Params] = None):
         with get_pool().connection() as conn, conn.cursor(row_factory=factory) as cur:
             cur.execute(query, params)
             return cur.fetchmany(max)
@@ -71,16 +72,28 @@ def make_fetch_many(cls: Type[T]):
     return fetch
 
 
-def make_fetch_all(cls: Type[T]):
+def make_fetchall(cls: Type[T]):
     factory: rows.RowFactory[T] = row_factory(cls)
 
-    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params]):
+    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
         with get_pool().connection() as conn, conn.cursor(row_factory=factory) as cur:
             cur.execute(query, params)
             return cur.fetchall()
 
     return fetch
 
+
+
+
+
+def make_execute(cls: Type[T]):
+    factory: rows.RowFactory[T] = row_factory(cls)
+
+    def fetch(query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
+        with get_pool().connection() as conn, conn.cursor(row_factory=factory) as cur:
+            cur.execute(query, params)
+
+    return fetch
 
 class ManagedCursor(Generic[T]):
     def __init__(self, type_: Type[T]):
@@ -103,15 +116,15 @@ class ManagedCursor(Generic[T]):
 
         return fac_func
 
-    def fetch_one(self, query: psy_abc.Query, params: Optional[psy_abc.Params]):
+    def fetchone(self, query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
         with get_pool().connection() as conn, conn.cursor(
             row_factory=self.row_factory
         ) as cur:
             cur.execute(query, params)
             return cur.fetchone()
 
-    def fetch_many(
-        self, query: psy_abc.Query, params: Optional[psy_abc.Params], size: int
+    def fetchmany(
+        self, query: psy_abc.Query, size: int, params: Optional[psy_abc.Params] = None
     ):
         with get_pool().connection() as conn, conn.cursor(
             row_factory=self.row_factory
@@ -119,9 +132,15 @@ class ManagedCursor(Generic[T]):
             cur.execute(query, params)
             return cur.fetchmany(size)
 
-    def fetch(self, query: psy_abc.Query, params: Optional[psy_abc.Params]):
+    def fetchall(self, query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
         with get_pool().connection() as conn, conn.cursor(
             row_factory=self.row_factory
         ) as cur:
             cur.execute(query, params)
             return cur.fetchall()
+
+    def execute(self, query: psy_abc.Query, params: Optional[psy_abc.Params] = None):
+        with get_pool().connection() as conn, conn.cursor(
+            row_factory=self.row_factory
+        ) as cur:
+            cur.execute(query, params)
