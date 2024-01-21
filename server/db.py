@@ -1,14 +1,13 @@
 import logging
 import psycopg
 from psycopg import abc as psy_abc
-from user import models
 
 from psycopg import rows
 import psycopg_pool
 
 import config
 
-from typing import Optional, TypeVar, Any, Generic, Type, List
+from typing import Optional, TypeVar, Generic, Type
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +82,6 @@ def make_fetchall(cls: Type[T]):
     return fetch
 
 
-
-
-
 def make_execute(cls: Type[T]):
     factory: rows.RowFactory[T] = row_factory(cls)
 
@@ -94,6 +90,7 @@ def make_execute(cls: Type[T]):
             cur.execute(query, params)
 
     return fetch
+
 
 class ManagedCursor(Generic[T]):
     def __init__(self, type_: Type[T]):
