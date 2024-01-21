@@ -7,9 +7,9 @@ services:
     image: filestorage-api
     pull_policy: never
     ports:
-      - 5000:5000
+      - 5000:80
     volumes:
-      - ./src:/opt/server
+      - ./server:/opt/server
     environment:
       - PGHOST=${PGHOST}
       - PGUSER=${PGUSER}
@@ -19,6 +19,8 @@ services:
     depends_on:
       filestorage-db:
         condition: service_healthy
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
+
 
   filestorage-db:
     env_file: .env
@@ -33,7 +35,7 @@ services:
       - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=${PGDATABASE}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${PGDATABASE}"]
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
       interval: 5s
       timeout: 5s
       retries: 5

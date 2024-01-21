@@ -23,3 +23,9 @@ create table file (
     updated_on timestamp,
     constraint unique_file_path_in_bucket unique (path, bucket_id)
 );
+
+create table session (
+    id uuid primary key not null,
+    user_id int references filestorage_user(id),
+    valid_to timestamp not null
+);
