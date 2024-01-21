@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 
 router = fastapi.APIRouter(
-    prefix="/files/", tags=["buckets"], responses={404: {"description": "Not found"}}
+    prefix="/files", tags=["buckets"], responses={404: {"description": "Not found"}}
 )
 
 # TODO buckets, files

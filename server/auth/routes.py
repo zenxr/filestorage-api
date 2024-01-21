@@ -16,7 +16,7 @@ sessioncursor = db.ManagedCursor(authmodels.Session)
 _security = security.HTTPBasic()
 
 router = fastapi.routing.APIRouter(
-    prefix="/auth/",
+    prefix="/auth",
     tags=["users", "auth"],
     responses={404: {"description": "Not found"}},
 )

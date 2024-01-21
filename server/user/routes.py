@@ -9,7 +9,7 @@ import db
 cursor = db.ManagedCursor(models.User)
 
 router = fastapi.APIRouter(
-    prefix="/users/", tags=["users"], responses={404: {"description": "Not found"}}
+    prefix="/users", tags=["users"], responses={404: {"description": "Not found"}}
 )
 
 
