@@ -1,8 +1,9 @@
 import dataclasses
 import datetime
+import uuid
 
 @dataclasses.dataclass
 class Session:
-    id: str
+    id: uuid.UUID
     user_id: int
     valid_to: datetime.datetime

@@ -1,5 +1,4 @@
-import uuid
-import datetime
+import logging
 
 import fastapi
 from fastapi import security
@@ -9,6 +8,8 @@ from . import util as authutil
 from user import models as usermodels
 from user import schemas as userschemas
 import db
+
+logger = logging.getLogger(__name__)
 
 usercursor = db.ManagedCursor(usermodels.User)
 sessioncursor = db.ManagedCursor(authmodels.Session)
@@ -42,24 +43,26 @@ def login(credentials: security.HTTPBasicCredentials = fastapi.Depends(_security
             headers={"WWW_Authenticate": "Basic"},
         )
     response = fastapi.responses.JSONResponse(
-        {"message": "Logged in successfully", "session_id": session.id}
+        {"message": "Logged in successfully", "session_id": str(session.id)}
     )
-    response.set_cookie(key="session_id", value=session.id, expires=session.valid_to)
+    # TODO: `expires` requires UTC offset
+    # response.set_cookie(key="session_id", value=str(session.id), expires=session.valid_to)
+    response.set_cookie(key="session_id", value=str(session.id))
+    return response
 
 
-@router.get("/me", response_model=userschemas.OutUser)
 @authutil.authorization_required
+@router.get("/me", response_model=userschemas.OutUser)
 def current_user(request: fastapi.Request):
     if session_id := request.cookies.get("session_id"):
-        query = "".join(
-            [
-                "select filestorage_user.*",
-                "from session"
-                "join filestorage_user on session.user_id = filestorage_user.id",
-                "where session.id = %s",
-            ]
-        )
-        if user := usercursor.fetchone(query, session_id):
+        query = """
+        select filestorage_user.*
+        from filestorage_user
+        , session
+        where session.id=%s
+            and filestorage_user.id = session.user_id
+        """
+        if user := usercursor.fetchone(query, (session_id,)):
             return user
     raise fastapi.HTTPException(
         status_code=fastapi.status.HTTP_401_UNAUTHORIZED, detail="Invalid session ID"
@@ -71,7 +74,7 @@ def logout(request: fastapi.Request):
     if session_id := request.cookies.get("session_id"):
         if not (
             session := sessioncursor.fetchone(
-                "delete from sessions where id=%s", (session_id,)
+                "delete from session where id=%s returning *;", (session_id,)
             )
         ):
             return fastapi.HTTPException(

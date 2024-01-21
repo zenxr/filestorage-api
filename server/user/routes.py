@@ -15,14 +15,14 @@ router = fastapi.APIRouter(
 
 @router.post("/", response_model=schemas.OutUser)
 def create_user(user: schemas.InUser):
-    cursor.fetchone(
-        "insert into filestorage_user (username, password, email) values (%s, %s, %s)",
+    return cursor.fetchone(
+        "insert into filestorage_user (username, password, email) values (%s, %s, %s) returning * ;",
         (user.username, user.hash_salt_pass(), user.email),
     )
 
 @router.get("/{user_id}", response_model=schemas.OutUser)
 def find_by_id(user_id: int):
-    return cursor.fetchone("select * from filestorage_user where id=%s", (user_id,))
+    return cursor.fetchone("select * from filestorage_user where id=%s ;", (user_id,))
 
 
 @router.put("/", response_model=schemas.OutUser)

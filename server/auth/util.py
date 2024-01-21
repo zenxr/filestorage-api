@@ -1,6 +1,7 @@
 import functools
 import uuid
 import datetime
+import logging
 
 import fastapi
 
@@ -10,6 +11,8 @@ import db
 
 sessioncursor = db.ManagedCursor(authmodels.Session)
 usercursor = db.ManagedCursor(usermodels.User)
+
+logger = logging.getLogger(__name__)
 
 
 def session_inactivity_duration():
@@ -22,6 +25,7 @@ def refresh_session(session_id):
         update session
         set valid_to=%s
         where id=%s and valid_to >= now()
+        returning *
         """,
         (session_inactivity_duration(), session_id),
     )
@@ -30,7 +34,11 @@ def refresh_session(session_id):
 def create_session(user: usermodels.User):
     session_id = uuid.uuid4()
     return sessioncursor.fetchone(
-        "insert into session (id, user_id, valid_to)",
+        """
+        insert into session (id, user_id, valid_to)
+        values (%s, %s, %s)
+        returning * ;
+        """,
         (session_id, user.id, session_inactivity_duration()),
     )
 
@@ -43,7 +51,7 @@ def authorization_required(func):
                 fastapi.status.HTTP_401_UNAUTHORIZED, detail="Invalid session ID"
             )
 
-        if not (refresh_session(sess_cookie)):
+        if not (session := refresh_session(sess_cookie)):
             return fastapi.HTTPException(
                 fastapi.status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired session ID",
