@@ -1,11 +1,31 @@
-TODO
+# TODO
 
-- [x] persistance
+General:
+
+- [x] persistence
 - [x] separate routers
-- [ ] request validation
-- [ ] authentication
-- [ ] support db migrations?
+- [x] request validation
+- [x] authentication
+- [ ] support db migrations via dbmate
 - [ ] SSL support (optional in dev mode)
+- [ ] (easy) Bucket user groups (bucket (many) <--> (many) user )
+    - Maybe: Including readonly perms
+- [ ] (easy) Include both storage location and presentable filepath @ Files
+    - Currently, only one path field
+- [ ] (easy) Scheduled task to delete expired sessions
+
+UI:
+
+- [ ] Bucket UI
+    - [ ] view/create/select buckets
+        - table view, paginated
+    - [ ] Selected bucket -> view files
+        - table view, paginated
+        - CRUD on files
+    - [ ] Rudimentary search
+        - Little more than "filename like X" and "bucket name like X"
+- [ ] User management UI
+    - Eventually: roles (incl admin), API keys
 
 # 2024-01-15
 
@@ -27,3 +47,13 @@ Remaning @ session authentication:
 - decorator to check session auth
     - relies on session cookie, already done
 
+# 2024-01-28
+
+Session authentication finished. Began working on frontend, decided to try out
+htmx (it's hip!) as I still suck at javascript.
+
+So far, liking it a lot. Currently, it's only used for "login" and "logout" at
+navigation. "Login" page is a full site reload, losing the point of htmx. I'd
+like to keep htmx components small, but ugly as I don't like them referencing
+outside of their immediate scope in the DOM. Need to think more about approach:
+Either include navbar @ index or accept what I deem ugly.
