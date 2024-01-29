@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Filestorage</title>
+    <link href="{{ url_for('static', path='/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        .landing-image {
+            position: relative;
+            background: url('/static/cover_image.png') no-repeat center center;
+            background-size: cover;
+            height: 100vh; /* Set the height to full viewport height */
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+            z-index: 1; /* Ensure overlay is above the image */
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2; /* Ensure text content is above the overlay */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div hx-trigger="load" hx-get="navbar"></div>
+    <br>
+    <div class="landing-image">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1 class="">Filestorage API</h1>
+        </div>
+    </div>
+    <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
+</body>
+</html>

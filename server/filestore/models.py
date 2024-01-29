@@ -18,4 +18,8 @@ class File:
     created_on: datetime.datetime
     updated_on: Optional[datetime.datetime] = None
 
+@dataclasses.dataclass
+class CreateFile:
+    path: str
+    bucket_id: int
 

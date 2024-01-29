@@ -45,7 +45,8 @@ def login(credentials: security.HTTPBasicCredentials = fastapi.Depends(_security
     response = fastapi.responses.JSONResponse(
         {"message": "Logged in successfully", "session_id": str(session.id)}
     )
-    # TODO: `expires` requires UTC offset
+    response.headers.update({"HX-Redirect": "/ui"})
+    # TODO: `expires` requires UTC offset, some incantation like...
     # response.set_cookie(key="session_id", value=str(session.id), expires=session.valid_to)
     response.set_cookie(key="session_id", value=str(session.id))
     return response
@@ -72,13 +73,16 @@ def current_user(request: fastapi.Request):
 @router.post("/logout")
 def logout(request: fastapi.Request):
     if session_id := request.cookies.get("session_id"):
-        if not (
-            session := sessioncursor.fetchone(
-                "delete from session where id=%s returning *;", (session_id,)
-            )
+        if not sessioncursor.fetchone(
+            "delete from session where id=%s returning *;", (session_id,)
         ):
             return fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid session ID",
             )
-        return {"message": "Logged out successfully", "session_id": session.id}
+        response = fastapi.responses.JSONResponse(
+            {"message": "Logged out successfully"}
+        )
+        response.headers.update({"HX-Redirect": "/ui"})
+        response.delete_cookie(key="session_id")
+        return response
