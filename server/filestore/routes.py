@@ -28,10 +28,10 @@ def create_bucket(
     name: Annotated[str | None, fastapi.Form()] = None,
     bucket: Optional[schemas.CreateBucketRequest] = None,
 ):
-    # ugly, accepting both form data and request params
     if not (_user := authutil.current_user(request)):
         raise fastapi.HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
 
+    # ugly, accepting both form data and request params
     if bucket:
         name = bucket.name
     elif not name:

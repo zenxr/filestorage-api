@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <title>Filestorage</title>
+  <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
+  <script src="{{ url_for('static', path='/htmx-json-enc.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/pico.min.css')}}">
+</head>
+
+<body>
+  <div hx-trigger="load" hx-get="navbar"></div>
+  <main class="container">
+    <h1>Sign up</h1>
+      <!-- Markup example 1: input is inside label -->
+      <label for="email">
+        Email
+        <input type="text" id="email" name="email" placeholder="you@somewhere.com" required>
+      </label>
+
+      <label for="username">
+        Username
+        <input type="text" id="username" name="username" placeholder="username" required>
+      </label>
+
+      <label for="password">
+        Password
+        <input type="password" id="password" name="password" placeholder="********" required>
+      </label>
+
+      <!-- Button -->
+      <button type="submit" hx-post="/users/" hx-ext='json-enc' hx-vals="js:{
+                    'username': document.getElementById('username').value,
+                    'password': document.getElementById('password').value,
+                    'email': document.getElementById('email').value}">
+        Sign up
+      </button>
+  </main>
+</body>
+
+</html>

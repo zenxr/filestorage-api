@@ -13,6 +13,7 @@ General:
 - [ ] (easy) Include both storage location and presentable filepath @ Files
     - Currently, only one path field
 - [ ] (easy) Scheduled task to delete expired sessions
+- [ ] Token based auth
 
 UI:
 

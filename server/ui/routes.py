@@ -27,10 +27,16 @@ async def navbar(request: fastapi.Request):
         context={"logged_in": user_logged_in},
     )
 
+
 @router.get("/login", response_class=fastapi.responses.HTMLResponse)
 async def login(request: fastapi.Request):
     return templates.TemplateResponse(
-        request=request,
-        name="login.html.jinja2",
-        context={}
+        request=request, name="login.html.jinja2", context={}
+    )
+
+
+@router.get("/signup", response_class=fastapi.responses.HTMLResponse)
+async def signup(request: fastapi.Request):
+    return templates.TemplateResponse(
+        request=request, name="signup.html.jinja2", context={}
     )

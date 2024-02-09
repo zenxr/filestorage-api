@@ -1,27 +1,38 @@
 <html>
-<head>
-    <title>Filestorage</title>
-    <link href="{{ url_for('static', path='/bootstrap.min.css') }}" rel="stylesheet">
-</head>
-<body>
-    <div hx-trigger="load" hx-get="navbar"></div>
-    <br>
-    <div class="container">
-        <h1>Login</h1>
-        <form id="loginForm" hx-post="/auth/login">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" required>
-            </div>
-            <br>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-    </div>
-    <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
-</body>
-</html>
 
+<head>
+  <title>Filestorage</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/pico.min.css')}}">
+  <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
+  <script src="{{ url_for('static', path='/htmx-json-enc.js') }}"></script>
+</head>
+
+<body>
+  <main class="container">
+    <div hx-trigger="load" hx-get="navbar"></div>
+    <h1>Log In</h1>
+    <div class="grid">
+      <label for="username">
+        Username
+        <input type="text" id="username" name="username" required>
+      </label>
+
+      <label for="password">
+        Password
+        <input type="password" id="password" name="password" required>
+      </label>
+    </div>
+
+    <!-- fastapi decodes json to types but not forms, rather send json and leave UI ugly -->
+    <button type="submit" hx-post="/auth/login" hx-ext='json-enc' hx-vals="js:{
+               'username': document.getElementById('username').value,
+               'password':document.getElementById('password').value}">
+      Submit
+    </button>
+
+    <div>New? <a href="/ui/signup">Sign up</a></div>
+  </main>
+  <br>
+</body>
+
+</html>

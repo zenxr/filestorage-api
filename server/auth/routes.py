@@ -1,7 +1,7 @@
 import logging
+import dataclasses
 
 import fastapi
-from fastapi import security
 
 from . import models as authmodels
 from . import util as authutil
@@ -14,21 +14,23 @@ logger = logging.getLogger(__name__)
 usercursor = db.ManagedCursor(usermodels.User)
 sessioncursor = db.ManagedCursor(authmodels.Session)
 
-_security = security.HTTPBasic()
-
 router = fastapi.routing.APIRouter(
     prefix="/auth",
     tags=["users", "auth"],
     responses={404: {"description": "Not found"}},
 )
 
+@dataclasses.dataclass
+class LoginParams:
+    username: str
+    password: str
 
 @router.post("/login")
-def login(credentials: security.HTTPBasicCredentials = fastapi.Depends(_security)):
+def login(params: LoginParams):
     user = usercursor.fetchone(
-        "select * from filestorage_user where username=%s", (credentials.username,)
+        "select * from filestorage_user where username=%s", (params.username,)
     )
-    if not (user and user.check_password(credentials.password)):
+    if not (user and user.check_password(params.password)):
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
