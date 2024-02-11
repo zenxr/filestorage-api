@@ -2,6 +2,7 @@ import dataclasses
 import datetime
 
 import bcrypt
+from .models import User
 
 
 @dataclasses.dataclass
@@ -23,3 +24,12 @@ class OutUser:
     username: str
     email: str
     created_on: datetime.datetime
+
+    @classmethod
+    def from_user(cls, user: User):
+        return cls(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            created_on=user.created_on,
+        )

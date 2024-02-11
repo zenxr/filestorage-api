@@ -78,7 +78,7 @@ def logout(request: fastapi.Request):
         if not sessioncursor.fetchone(
             "delete from session where id=%s returning *;", (session_id,)
         ):
-            return fastapi.HTTPException(
+            raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid session ID",
             )
