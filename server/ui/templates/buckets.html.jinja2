@@ -1,0 +1,22 @@
+<h1>Buckets</h1>
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Created On</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bucket in buckets %}
+            <tr>
+                <th scope="row">{{ bucket.id }}</th>
+                <td>{{ bucket.name }}</td>
+                <td>{{ bucket.created_by }}</td>
+                <td>{{ bucket.created_on }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>

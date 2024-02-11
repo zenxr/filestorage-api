@@ -3,6 +3,7 @@
 <head>
     <title>Filestorage</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/pico.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/custom.css')}}">
     <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
 </head>
 
@@ -11,7 +12,7 @@
         <div hx-trigger="load" hx-get="navbar"></div>
         <br>
         <div class="main">
-            <h1 class="">Filestorage API</h1>
+            <div hx-trigger="load" hx-get="users"></div>
         </div>
         <script src="{{ url_for('static', path='/htmx.min.js') }}"></script>
     </main>
