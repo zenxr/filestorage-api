@@ -1,15 +1,15 @@
 import os
 import pathlib
 import db
-
-from . import models, schemas
-
 from typing import Annotated, Optional
 
 import fastapi
+from fastapi.encoders import jsonable_encoder
 
+from . import models, schemas
 import config
 from auth import util as authutil
+
 
 bucket_cursor = db.ManagedCursor(models.Bucket)
 file_cursor = db.ManagedCursor(models.File)
@@ -35,13 +35,18 @@ def create_bucket(
     if bucket:
         name = bucket.name
     elif not name:
-        raise fastapi.HTTPException(status_code=400, detail="Name required via param or form data")
+        raise fastapi.HTTPException(
+            status_code=400, detail="Name required via param or form data"
+        )
 
-    return bucket_cursor.fetchone(
+    created_bucket = bucket_cursor.fetchone(
         """
         insert into bucket (name, created_by) values (%s, %s) returning *;
         """,
         (name, _user.id),
+    )
+    return fastapi.responses.JSONResponse(
+        jsonable_encoder(created_bucket), headers={"HX-Trigger": "bucketAdded"}
     )
 
 
@@ -146,6 +151,7 @@ def get_upload_form():
     </html>
     """
     return fastapi.responses.HTMLResponse(content=content)
+
 
 # TODO: DELETE, PUT @ files
 

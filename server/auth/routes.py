@@ -1,4 +1,3 @@
-import logging
 import dataclasses
 
 import fastapi
@@ -8,8 +7,6 @@ from . import util as authutil
 from user import models as usermodels
 from user import schemas as userschemas
 import db
-
-logger = logging.getLogger(__name__)
 
 usercursor = db.ManagedCursor(usermodels.User)
 sessioncursor = db.ManagedCursor(authmodels.Session)

@@ -1,4 +1,3 @@
-import logging
 import psycopg
 from psycopg import abc as psy_abc
 
@@ -8,8 +7,6 @@ import psycopg_pool
 import config
 
 from typing import Optional, TypeVar, Generic, Type
-
-logger = logging.getLogger(__name__)
 
 _pool_default = None
 

@@ -1,0 +1,13 @@
+<h1>Buckets</h1>
+<div hx-trigger="load, bucketAdded from:body" hx-get="buckets-table"></div>
+
+<hgroup>
+    <h4>Create new bucket</h4>
+    <form hx-post="/buckets/" hx-swap="none">
+        <label for="bucket-name">
+            Name
+            <input type="text" id="bucket-name" name="name" required>
+        </label>
+        <button>Submit</button>
+    </form>
+</hgroup>

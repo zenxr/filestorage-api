@@ -6,9 +6,9 @@
     <li><a href="#">Files</a></li>
     <li><a href="#">Users</a></li>
     {% if logged_in == False %}
-    <li><a href="/ui/login" role="button">Login</a></li>
+    <li><a href="/ui/login">Login</a></li>
     {% else %}
-    <li><button hx-post="/auth/logout" hx-swap="none" role="button">Logout</button></li>
+    <li><a hx-post="/auth/logout" hx-swap="none">Logout</a></li>
     {% endif %}
   </ul>
 </nav>

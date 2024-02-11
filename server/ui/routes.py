@@ -1,13 +1,11 @@
 import dataclasses
-import logging
 
 import fastapi
 from fastapi import templating
 
 from auth import util as authutils
 from user import service as userservice
-
-logger = logging.getLogger(__name__)
+from filestore import routes
 
 router = fastapi.APIRouter(
     prefix="/ui",
@@ -17,12 +15,11 @@ router = fastapi.APIRouter(
 
 templates = templating.Jinja2Templates(directory="./ui/templates")
 
+
 @router.get("/", response_class=fastapi.responses.HTMLResponse)
 async def index(request: fastapi.Request):
     if not (authutils.current_user(request)):
-        response = fastapi.responses.RedirectResponse(
-            url="/ui/login"
-        )
+        response = fastapi.responses.RedirectResponse(url="/ui/login")
         response.delete_cookie(key="session_id")
         return response
 
@@ -54,6 +51,7 @@ async def signup(request: fastapi.Request):
         request=request, name="signup.html.jinja2", context={}
     )
 
+
 @authutils.authorization_required
 @router.get("/users", response_class=fastapi.responses.HTMLResponse)
 async def users_table(request: fastapi.Request):
@@ -63,7 +61,27 @@ async def users_table(request: fastapi.Request):
     # attribute -- we don't have to worry about exposing because template is
     # generated server side
     return templates.TemplateResponse(
-        request=request, name="users.html.jinja2", context={
-            'users': [dataclasses.asdict(u) for u in users]
-        }
+        request=request,
+        name="users.html.jinja2",
+        context={"users": [dataclasses.asdict(u) for u in users]},
+    )
+
+
+@authutils.authorization_required
+@router.get("/buckets", response_class=fastapi.responses.HTMLResponse)
+async def buckets_view(request: fastapi.Request):
+    return templates.TemplateResponse(
+        request=request, name="buckets/buckets.html.jinja2", context={}
+    )
+
+
+@authutils.authorization_required
+@router.get("/buckets-table", response_class=fastapi.responses.HTMLResponse)
+async def buckets_table(request: fastapi.Request):
+    buckets = routes.find_all()
+    buckets.sort(key=lambda u: u.name)
+    return templates.TemplateResponse(
+        request=request,
+        name="buckets/buckets_table.html.jinja2",
+        context={"buckets": [dataclasses.asdict(b) for b in buckets]},
     )

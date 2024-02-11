@@ -1,7 +1,6 @@
 import functools
 import uuid
 import datetime
-import logging
 import dataclasses
 
 import fastapi
@@ -12,8 +11,6 @@ import db
 
 sessioncursor = db.ManagedCursor(authmodels.Session)
 usercursor = db.ManagedCursor(usermodels.User)
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
