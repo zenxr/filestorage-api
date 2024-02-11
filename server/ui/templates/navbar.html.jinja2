@@ -3,8 +3,8 @@
     <li><strong>Filestorage</strong></li>
   </ul>
   <ul>
-    <li><a href="#">Files</a></li>
-    <li><a href="#">Users</a></li>
+    <li><a hx-get="buckets" hx-target="#main-content">Buckets</a></li>
+    <li><a hx-get="users" hx-target="#main-content">Users</a></li>
     {% if logged_in == False %}
     <li><a href="/ui/login">Login</a></li>
     {% else %}

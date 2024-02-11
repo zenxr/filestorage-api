@@ -17,16 +17,17 @@ General:
 
 UI:
 
-- [ ] Bucket UI
-    - [ ] view/create/select buckets
+- [x] Bucket UI
+    - [x] view/create/select buckets
         - table view, paginated
     - [ ] Selected bucket -> view files
         - table view, paginated
         - CRUD on files
     - [ ] Rudimentary search
         - Little more than "filename like X" and "bucket name like X"
-- [ ] User management UI
-    - Eventually: roles (incl admin), API keys
+- [x] User management UI
+    - [ ] Eventually: roles (incl admin), API keys
+    - [ ] Admin should be able to delete users
 
 # 2024-01-15
 
@@ -58,3 +59,7 @@ navigation. "Login" page is a full site reload, losing the point of htmx. I'd
 like to keep htmx components small, but ugly as I don't like them referencing
 outside of their immediate scope in the DOM. Need to think more about approach:
 Either include navbar @ index or accept what I deem ugly.
+
+# 2024-02-11
+
+More UI progress, fixed some RPC routes. Getting closer!

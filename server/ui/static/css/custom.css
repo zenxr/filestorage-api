@@ -40,6 +40,10 @@
     --crust: #11111b;
 
     --background-color: var(--base);
+    --card-background-color: var(--crust);
+    --form-element-active-background-color: var(--crust);
+    --form-element-background-color: var(--crust);
+    --mark-background-color: var(--maroon);
     --color: var(--text);
     --primary: var(--blue);
     --primary-focus: var(--lavender);

@@ -1,22 +1,23 @@
-<article>
-    <h1 class="">Filestorage API</h1>
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Username</th>
-                <th scope="col">Email</th>
-                <th scope="col">Created</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <th scope="row">{{ user.id }}</th>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.created_on }}</td>
-            </tr>
-            {% endfor %}
-    </table>
-</article>
+<hgroup>
+    <h1>Users</h1>
+    <p><mark>Notice</mark> This page is a WIP.</p>
+</hgroup>
+<table>
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <th scope="row">{{ user.id }}</th>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.created_on }}</td>
+        </tr>
+        {% endfor %}
+</table>
