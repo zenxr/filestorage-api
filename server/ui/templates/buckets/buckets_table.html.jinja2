@@ -1,5 +1,5 @@
 <hgroup>
-    <h4>Found buckets</h4>
+    <h4>Existing Buckets</h4>
     <table>
         <thead>
             <tr>
@@ -7,6 +7,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Created By</th>
                 <th scope="col">Created On</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -16,6 +17,7 @@
                 <td>{{ bucket.name }}</td>
                 <td>{{ bucket.created_by }}</td>
                 <td>{{ bucket.created_on }}</td>
+                <td><a hx-get="buckets/{{ bucket.id }}" hx-target="#main-content">Select → </a></td>
             </tr>
             {% endfor %}
     </table>

@@ -1,17 +1,22 @@
-<hgroup>
-    <h1>Buckets</h1>
-    <p>Buckets serve as the top level object for organizing files. Think of each
-    as a root directory.</p>
-</hgroup>
-<div hx-trigger="load, bucketAdded from:body" hx-get="buckets-table"></div>
-
-<hgroup>
-    <h4>Create new bucket</h4>
-    <form hx-post="/buckets/" hx-swap="none">
-        <label for="bucket-name">
-            Name
-            <input type="text" id="bucket-name" name="name" required>
-        </label>
-        <button>Submit</button>
-    </form>
-</hgroup>
+<section>
+    <hgroup>
+        <h1>Buckets</h1>
+        <p>Buckets serve as the top level object for organizing files. Think of each
+            as a root directory.</p>
+    </hgroup>
+</section>
+<section>
+    <div hx-trigger="load, bucketAdded from:body" hx-get="buckets-table"></div>
+</section>
+<section>
+    <hgroup>
+        <h4>Create new bucket</h4>
+        <form hx-post="/buckets/" hx-swap="none">
+            <label for="bucket-name">
+                Name
+                <input type="text" id="bucket-name" name="name" required>
+            </label>
+            <button>Submit</button>
+        </form>
+    </hgroup>
+</section>

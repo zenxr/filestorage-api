@@ -75,20 +75,16 @@ def find_all(max: Optional[int] = None):
 
 
 @bucket_router.get("/{bucket_id}")
-def find_by_name(name: str):
-    return bucket_cursor.fetchone("select * from bucket where name = %s", (name,))
+def find_by_id(bucket_id: str):
+    return bucket_cursor.fetchone("select * from bucket where id = %s", (bucket_id,))
 
 
-router = fastapi.APIRouter(
+file_router = fastapi.APIRouter(
     prefix="/files",
     tags=["buckets", "files"],
     dependencies=[fastapi.Depends(authutil.refresh_session)],
     responses={404: {"description": "Not found"}},
 )
-
-
-def bucket_by_name(name: str):
-    return bucket_cursor.fetchone("select * from bucket where id=%s", (name,))
 
 
 def create_file(file: models.CreateFile, user_id: int):
@@ -97,24 +93,36 @@ def create_file(file: models.CreateFile, user_id: int):
         (file.path, file.bucket_id, user_id),
     )
 
+# FIXME: Lazily stripped this out of a route, see next function
+def _find_bucket_files(bucket_id: str, max: Optional[int] = None):
+    query = "select * from file where bucket_id = %s"
+    params = (bucket_id,)
+    if max is not None:
+        return file_cursor.fetchmany(query, max, params)
+    return file_cursor.fetchall(query, params)
+
+
+@authutil.authorization_required
+@bucket_router.get("/{bucket_id}/files")
+def find_bucket_files(bucket_id: str, max: Optional[int] = None):
+    return _find_bucket_files(bucket_id, max)
 
 # TODO buckets, files
 # this is just serving as a how to for now
 
 
 @authutil.authorization_required
-@router.post("/upload/")
+@bucket_router.post("/{bucket_id}/upload/")
 async def upload_file(
     request: fastapi.Request,
+    bucket_id: str,
     file: Annotated[fastapi.UploadFile, fastapi.File()],
-    bucket: Annotated[str, fastapi.Form()],
     path: Annotated[pathlib.Path, fastapi.Form()],
 ):
     if not file.filename:
         raise fastapi.HTTPException(status_code=400, detail="No filename provided.")
-    if not (_bucket := bucket_by_name(bucket)):
+    if not (_bucket := bucket_cursor.fetchone("select * from bucket where id = %s ;", (bucket_id))):
         raise fastapi.HTTPException(status_code=400, detail="Invalid bucket name.")
-        # TODO: this should be some auto-generated UUID
     if not (_user := authutil.current_user(request)):
         raise fastapi.HTTPException(status_code=fastapi.status.HTTP_401_UNAUTHORIZED)
     filepath = pathlib.Path(config.filestore_path) / file.filename
@@ -124,13 +132,18 @@ async def upload_file(
     _file = models.CreateFile(path=str(filepath), bucket_id=_bucket.id)
     create_file(_file, _user.id)
     return {
-        "bucket": bucket,
-        "file_content_type": file.content_type,
-        "filename": file.filename,
+        "bucket": {
+            "id": _bucket.id,
+            "name": _bucket.name,
+        },
+        "file": {
+            "content_type": file.content_type,
+            "name": file.filename,
+        }
     }
 
 
-@router.get("/upload")
+@file_router.get("/upload")
 def get_upload_form():
     content = """
     <html>
@@ -139,8 +152,8 @@ def get_upload_form():
     <label for="file">File:</label><br>
     <input type="file" name="file" id="file" required>
     <br>
-    <label for="bucket">Bucket:</label><br>
-    <input type="text" id="bucket" name="bucket" required>
+    <label for="bucket_id">Bucket:</label><br>
+    <input type="text" id="bucket_id" name="bucket_id" required>
     <br>
     <label for="path">Path:</label><br>
     <input type="text" id="path" name="path" required>

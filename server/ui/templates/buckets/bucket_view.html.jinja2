@@ -1,0 +1,56 @@
+<section>
+    <a hx-get="buckets" hx-target="#main-content">← Back to buckets</a>
+</section>
+<section>
+    <hgroup>
+        <h3>{{ bucket.name }}</h3>
+        <p>Bucket information</p>
+        <ul>
+            <li>ID: {{ bucket.id }}</li>
+            <li>Created By: {{ bucket.created_by }}</li>
+            <li>Created On: {{ bucket.created_on }}</li>
+        </ul>
+    </hgroup>
+</section>
+<section>
+    <hgroup>
+        <h4>Files</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Path</th>
+                    <th scope="col">Created By</th>
+                    <th scope="col">Created On</th>
+                    <th scope="col">Updated On</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                <tr>
+                    <td scope="row">{{ file.id }}</td>
+                    <td>{{ file.path }}</td>
+                    <td>{{ file.created_by }}</td>
+                    <td>{{ file.created_on }}</td>
+                    <td>{{ file.updated_on }}</td>
+                    <td><a href="buckets/{{ bucket.id }}/{{ file.id}}">Download</a></td>
+                </tr>
+                {% endfor %}
+                <!-- it'd be cool here to have the table autogenerate rows to upload
+            multiple files at once -->
+            </tbody>
+        </table>
+    </hgroup>
+</section>
+<section>
+    <form action="/{{ bucket.id }}/upload" enctype="multipart/form-data" method="post">
+        <label for="file">File:</label>
+        <input type="file" name="file" id="file" required>
+        <label for="bucket_id">Bucket:</label>
+        <input type="text" id="bucket_id" name="bucket_id" value="{{ bucket.id }}" required>
+        <label for="path">Path:</label>
+        <input type="text" id="path" name="path" required>
+        <input type="submit">
+    </form>
+</section>

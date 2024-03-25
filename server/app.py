@@ -12,7 +12,7 @@ app = fastapi.FastAPI()
 
 app.mount("/static", staticfiles.StaticFiles(directory="ui/static"), name="static")
 app.include_router(user_routes.router)
-app.include_router(filestore_routes.router)
+app.include_router(filestore_routes.file_router)
 app.include_router(filestore_routes.bucket_router)
 app.include_router(auth_routes.router)
 app.include_router(ui.router)

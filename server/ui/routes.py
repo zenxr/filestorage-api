@@ -76,6 +76,23 @@ async def buckets_view(request: fastapi.Request):
 
 
 @authutils.authorization_required
+@router.get("/buckets/{bucket_id}")
+def bucket_by_id(request: fastapi.Request, bucket_id: str):
+    bucket = routes.find_by_id(bucket_id)
+    if not bucket:
+        raise fastapi.exceptions.HTTPException(
+            fastapi.status.HTTP_404_NOT_FOUND, detail="Bucket not found"
+        )
+    files = routes._find_bucket_files(bucket_id) or {}
+    print(dataclasses.asdict(bucket))
+    return templates.TemplateResponse(
+        request=request,
+        name="buckets/bucket_view.html.jinja2",
+        context={"bucket": dataclasses.asdict(bucket), "files": [dataclasses.asdict(file) for file in files]},
+    )
+
+
+@authutils.authorization_required
 @router.get("/buckets-table", response_class=fastapi.responses.HTMLResponse)
 async def buckets_table(request: fastapi.Request):
     buckets = routes.find_all()
